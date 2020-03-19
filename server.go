@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
@@ -9,25 +10,24 @@ import (
 	"github.com/google/uuid"
 )
 
-const html string = `
-<html lang="en">
-<head>
-	<meta charset="utf8">
-	<title>wejay</title>
-	<style>ul, ul li { list-style: none; margin: none; padding: 0 }</style>
-</head>
-<body>%s</body>
-`
+var (
+	html string
+	list string
+)
 
-const list string = `
-<ul>
-	<li><a href="/player/play">Play</a></li>
-	<li><a href="/player/pause">Pause</a></li>
-	<li><a href="/player/next">Next track</a></li>
-	<li><a href="/player/previous">Previous Track</a></li>
-	<li><a href="/player/shuffle">Shuffle</a></li>
-</ul>
-`
+func init() {
+	if bytes, err := ioutil.ReadFile("./static/html/shell.html"); err != nil {
+		panic(err)
+	} else {
+		html = string(bytes)
+	}
+
+	if bytes, err := ioutil.ReadFile("./static/html/player.html"); err != nil {
+		panic(err)
+	} else {
+		list = string(bytes)
+	}
+}
 
 // ServerListen …
 func ServerListen() {
@@ -51,7 +51,7 @@ func ServerListen() {
 		}
 
 		w.Header().Set("Content-Type", "text/html")
-		fmt.Fprint(w, fmt.Sprintf(html, list))
+		fmt.Fprint(w, list)
 	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

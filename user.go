@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/zmb3/spotify"
@@ -37,20 +36,6 @@ func (u *User) SetClient(token *oauth2.Token) {
 	client := spotifyAuth.NewClient(token)
 
 	u.client = &client
-
-	user, err := client.CurrentUser()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("You are logged in as:", user.ID)
-
-	playerState, err := client.PlayerState()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Printf("Found your %s (%s)\n", playerState.Device.Type, playerState.Device.Name)
 }
 
 // RunAction …
