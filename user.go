@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"strings"
 
 	"github.com/zmb3/spotify"
 	"golang.org/x/oauth2"
@@ -62,6 +64,39 @@ func (u *User) RunAction(action Action) (err error) {
 	if err != nil {
 		log.Print(err)
 	}
+
+	return
+}
+
+// NowPlaying …
+func (u User) NowPlaying() (html string) {
+	client := u.getClient()
+
+	currentlyPlaying, err := client.PlayerCurrentlyPlaying()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	item := currentlyPlaying.Item
+	if item == nil {
+		return
+	}
+
+	var artists []string
+	for _, key := range item.Artists {
+		artists = append(artists, key.Name)
+	}
+	artist := strings.Join(artists, ", ")
+
+	html = fmt.Sprintf(`
+	<div>
+		<strong>Now playing</strong>
+		<p>
+			<span class="track">%s</span> ­- <span class="artists">%s</span>
+		</p>
+	</div>
+	`, item.SimpleTrack.Name, artist)
 
 	return
 }

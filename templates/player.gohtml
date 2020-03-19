@@ -1,10 +1,7 @@
-<html lang="en">
-<head>
-	<meta charset="utf8">
-	<title>wejay</title>
-	<style>ul, ul li { list-style: none; margin: none; padding: 0 }</style>
-</head>
+{{define "player"}}
+{{template "Header"}}
 <body>
+	{{if .NowPlaying}}{{.NowPlaying}}{{end}}
 	<ul>
 		<li><a href="/player/play">Play</a></li>
 		<li><a href="/player/pause">Pause</a></li>
@@ -13,3 +10,4 @@
 		<li><a href="/player/shuffle">Shuffle</a></li>
 	</ul>
 </body>
+{{end}}

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
@@ -10,27 +9,10 @@ import (
 	"github.com/google/uuid"
 )
 
-var (
-	html string
-	list string
-)
-
-func init() {
-	if bytes, err := ioutil.ReadFile("./static/html/shell.html"); err != nil {
-		panic(err)
-	} else {
-		html = string(bytes)
-	}
-
-	if bytes, err := ioutil.ReadFile("./static/html/player.html"); err != nil {
-		panic(err)
-	} else {
-		list = string(bytes)
-	}
-}
-
 // ServerListen …
 func ServerListen() {
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+
 	http.HandleFunc("/callback", completeAuth)
 
 	http.HandleFunc("/player/", func(w http.ResponseWriter, r *http.Request) {
@@ -45,17 +27,24 @@ func ServerListen() {
 			return
 		}
 
-		if err := user.RunAction(ActionFromString(strings.TrimPrefix(r.URL.Path, "/player/"))); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+		url := strings.TrimPrefix(r.URL.Path, "/player/")
+		if url != "" {
+			if err := user.RunAction(ActionFromString(url)); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+
+			http.Redirect(w, r, "//"+r.Host+"/player", 307)
 			return
 		}
 
 		w.Header().Set("Content-Type", "text/html")
-		fmt.Fprint(w, list)
+
+		TmplPlayer(w, user.NowPlaying())
 	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, fmt.Sprintf(html, `<a href="/new-auth">new auth</a>`))
+		TmplBase(w, `<a href="/new-auth">new auth</a>`)
 	})
 
 	http.HandleFunc("/new-auth", func(w http.ResponseWriter, r *http.Request) {
@@ -67,7 +56,7 @@ func ServerListen() {
 
 		w.Header().Set("Content-Type", "text/html")
 
-		fmt.Fprint(w, fmt.Sprintf(html, fmt.Sprintf(`<a href="%s">sign in</a>`, url)))
+		TmplNewAuth(w, url)
 	})
 
 	fmt.Printf("Listen on %s\n", addr)

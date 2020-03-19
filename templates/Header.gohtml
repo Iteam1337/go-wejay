@@ -1,0 +1,9 @@
+{{define "Header"}}
+<html lang="en">
+<head>
+	<meta charset="utf8">
+	<title>{{if .Title}}{{.Title}}{{else}}wejay{{end}}</title>
+	<link rel="stylesheet" type="text/css" href="/static/main.css" />
+  {{if .Meta}}{{.Meta}}{{end}}
+</head>
+{{end}}
