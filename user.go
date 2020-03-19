@@ -53,18 +53,6 @@ func (u *User) SetClient(token *oauth2.Token) {
 	fmt.Printf("Found your %s (%s)\n", playerState.Device.Type, playerState.Device.Name)
 }
 
-// Action …
-type Action string
-
-// Action enum …
-const (
-	Play     Action = "play"
-	Pause    Action = "pause"
-	Next     Action = "next"
-	Previous Action = "previous"
-	Shuffle  Action = "shuffle"
-)
-
 // RunAction …
 func (u *User) RunAction(action Action) (err error) {
 	client := u.getClient()
