@@ -54,9 +54,8 @@ func (u *User) SetClient(token *oauth2.Token) {
 }
 
 // RunAction …
-func (u *User) RunAction(action string) error {
+func (u *User) RunAction(action string) (err error) {
 	client := u.getClient()
-	var err error
 	switch action {
 	case "play":
 		err = client.Play()
@@ -79,5 +78,5 @@ func (u *User) RunAction(action string) error {
 		log.Print(err)
 	}
 
-	return err
+	return
 }
