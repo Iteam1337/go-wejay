@@ -45,7 +45,7 @@ func ServerListen() {
 			return
 		}
 
-		if err := user.RunAction(strings.TrimPrefix(r.URL.Path, "/player/")); err != nil {
+		if err := user.RunAction(ActionFromString(strings.TrimPrefix(r.URL.Path, "/player/"))); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}

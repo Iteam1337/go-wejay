@@ -53,19 +53,31 @@ func (u *User) SetClient(token *oauth2.Token) {
 	fmt.Printf("Found your %s (%s)\n", playerState.Device.Type, playerState.Device.Name)
 }
 
+// Action …
+type Action string
+
+// Action enum …
+const (
+	Play     Action = "play"
+	Pause    Action = "pause"
+	Next     Action = "next"
+	Previous Action = "previous"
+	Shuffle  Action = "shuffle"
+)
+
 // RunAction …
-func (u *User) RunAction(action string) (err error) {
+func (u *User) RunAction(action Action) (err error) {
 	client := u.getClient()
 	switch action {
-	case "play":
+	case Play:
 		err = client.Play()
-	case "pause":
+	case Pause:
 		err = client.Pause()
-	case "next":
+	case Next:
 		err = client.Next()
-	case "previous":
+	case Previous:
 		err = client.Previous()
-	case "shuffle":
+	case Shuffle:
 		state, maybeErr := u.toggleShuffleState()
 		if maybeErr != nil {
 			err = maybeErr
