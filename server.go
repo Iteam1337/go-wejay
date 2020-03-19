@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -8,6 +9,45 @@ import (
 
 	"github.com/google/uuid"
 )
+
+// PlayerResponse …
+type PlayerResponse struct {
+	Ok      bool   `json:"ok"`
+	Message string `json:"message"`
+	Error   error  `json:"error"`
+}
+
+func (p *PlayerResponse) Write(w http.ResponseWriter) {
+	json, err := json.Marshal(p)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Println(p)
+	fmt.Println(string(json))
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(json)
+}
+
+// NewPlayerResponse …
+func NewPlayerResponse(w http.ResponseWriter, message string) (res PlayerResponse) {
+	res.Ok = true
+	res.Message = message
+	res.Write(w)
+	return
+}
+
+// NewPlayerResponseErr …
+func NewPlayerResponseErr(w http.ResponseWriter, message string) (res PlayerResponse) {
+	res.Ok = false
+	res.Message = message
+	res.Error = NewCustomError(message)
+	res.Write(w)
+	return
+}
 
 // ServerListen …
 func ServerListen() {
@@ -23,24 +63,35 @@ func ServerListen() {
 
 		user, ok := users[string(id)]
 		if !ok {
-			http.Error(w, "User not found", http.StatusForbidden)
-			return
-		}
-
-		url := strings.TrimPrefix(r.URL.Path, "/player/")
-		if url != "" {
-			if err := user.RunAction(ActionFromString(url)); err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
-				return
-			}
-
-			http.Redirect(w, r, "//"+r.Host+"/player", 307)
+			http.Redirect(w, r, "//"+r.Host+"/new-auth", 307)
 			return
 		}
 
 		w.Header().Set("Content-Type", "text/html")
 
 		TmplPlayer(w, user.NowPlaying())
+	})
+
+	http.HandleFunc("/action/", func(w http.ResponseWriter, r *http.Request) {
+		id, err := GetIDFromCookie(w, r)
+		if err != nil {
+			NewPlayerResponseErr(w, "missing id")
+			return
+		}
+
+		user, ok := users[string(id)]
+		if !ok {
+			NewPlayerResponseErr(w, "user not found")
+			return
+		}
+
+		action := strings.TrimPrefix(r.URL.Path, "/action/")
+		if err := user.RunAction(ActionFromString(action)); err != nil {
+			NewPlayerResponseErr(w, "action failed")
+			return
+		}
+
+		NewPlayerResponse(w, fmt.Sprintf("action %s applied successful", action))
 	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
