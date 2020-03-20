@@ -2,9 +2,8 @@ package jsonResponses
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
-
-	"github.com/Iteam1337/go-wejay/utils"
 )
 
 // PlayerResponse …
@@ -37,7 +36,7 @@ func NewPlayerResponse(w http.ResponseWriter, message string) (res PlayerRespons
 func NewPlayerResponseErr(w http.ResponseWriter, message string) (res PlayerResponse) {
 	res.Ok = false
 	res.Message = message
-	res.Error = utils.NewCustomError(message)
+	res.Error = errors.New(message)
 	res.Write(w)
 	return
 }

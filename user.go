@@ -1,93 +1,93 @@
 package main
 
-import (
-	"log"
-	"strings"
+// import (
+// 	"log"
+// 	"strings"
 
-	"github.com/zmb3/spotify"
-	"golang.org/x/oauth2"
-)
+// 	"github.com/zmb3/spotify"
+// 	"golang.org/x/oauth2"
+// )
 
-// User …
-type User struct {
-	client *spotify.Client
-}
+// // User …
+// type User struct {
+// 	client *spotify.Client
+// }
 
-func (u *User) getClient() *spotify.Client {
-	return u.client
-}
+// func (u *User) getClient() *spotify.Client {
+// 	return u.client
+// }
 
-func (u *User) toggleShuffleState() (state bool, err error) {
-	client := u.client
+// func (u *User) toggleShuffleState() (state bool, err error) {
+// 	client := u.client
 
-	playerState, err := client.PlayerState()
+// 	playerState, err := client.PlayerState()
 
-	if err != nil {
-		return
-	}
+// 	if err != nil {
+// 		return
+// 	}
 
-	state = !playerState.ShuffleState
-	playerState.ShuffleState = state
+// 	state = !playerState.ShuffleState
+// 	playerState.ShuffleState = state
 
-	return
-}
+// 	return
+// }
 
-// SetClient …
-func (u *User) SetClient(token *oauth2.Token) {
-	client := spotifyAuth.NewClient(token)
+// // SetClient …
+// func (u *User) SetClient(token *oauth2.Token) {
+// 	client := spotifyAuth.NewClient(token)
 
-	u.client = &client
-}
+// 	u.client = &client
+// }
 
-// RunAction …
-func (u *User) RunAction(action Action) (err error) {
-	client := u.getClient()
-	switch action {
-	case Play:
-		err = client.Play()
-	case Pause:
-		err = client.Pause()
-	case Next:
-		err = client.Next()
-	case Previous:
-		err = client.Previous()
-	case Shuffle:
-		state, maybeErr := u.toggleShuffleState()
-		if maybeErr != nil {
-			err = maybeErr
-		} else {
-			err = client.Shuffle(state)
-		}
-	}
+// // RunAction …
+// func (u *User) RunAction(action Action) (err error) {
+// 	client := u.getClient()
+// 	switch action {
+// 	case Play:
+// 		err = client.Play()
+// 	case Pause:
+// 		err = client.Pause()
+// 	case Next:
+// 		err = client.Next()
+// 	case Previous:
+// 		err = client.Previous()
+// 	case Shuffle:
+// 		state, maybeErr := u.toggleShuffleState()
+// 		if maybeErr != nil {
+// 			err = maybeErr
+// 		} else {
+// 			err = client.Shuffle(state)
+// 		}
+// 	}
 
-	if err != nil {
-		log.Print(err)
-	}
+// 	if err != nil {
+// 		log.Print(err)
+// 	}
 
-	return
-}
+// 	return
+// }
 
-// NowPlaying …
-func (u User) NowPlaying() (artist string, track string) {
-	client := u.getClient()
+// // NowPlaying …
+// func (u User) NowPlaying() (artist string, track string) {
+// 	client := u.getClient()
 
-	currentlyPlaying, err := client.PlayerCurrentlyPlaying()
-	if err != nil {
-		log.Println(err.Error())
-		return
-	}
+// 	currentlyPlaying, err := client.PlayerCurrentlyPlaying()
+// 	if err != nil {
+// 		log.Println(err.Error())
+// 		return
+// 	}
 
-	item := currentlyPlaying.Item
-	if item == nil {
-		return
-	}
+// 	item := currentlyPlaying.Item
+// 	if item == nil {
+// 		return
+// 	}
 
-	var artists []string
-	for _, key := range item.Artists {
-		artists = append(artists, key.Name)
-	}
+// 	var artists []string
+// 	for _, key := range item.Artists {
+// 		artists = append(artists, key.Name)
+// 	}
 
-	artist = strings.Join(artists, ", ")
-	track = item.SimpleTrack.Name
-	return
-}
+// 	artist = strings.Join(artists, ", ")
+// 	track = item.SimpleTrack.Name
+// 	return
+// }

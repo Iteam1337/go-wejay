@@ -1,6 +1,10 @@
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
-github.com/Iteam1337/go-protobuf-wejay v0.0.0-20200320131920-25e864aee8d4 h1:mvy+l2tSzciNafMkV1/AAAcW0Jo/epWqNWbViT/pc4Q=
-github.com/Iteam1337/go-protobuf-wejay v0.0.0-20200320131920-25e864aee8d4/go.mod h1:FcQPg/k0jUhidxzCV9gucrx7AiKoyAaQmA65fnQWxKs=
+github.com/Iteam1337/go-protobuf-wejay v0.0.0-20200320193533-8309adab4b2e h1:3Pr/Ns7RIzjSUrSQrNfsf5meXuzZeppGMWmLSyCJg1U=
+github.com/Iteam1337/go-protobuf-wejay v0.0.0-20200320193533-8309adab4b2e/go.mod h1:FcQPg/k0jUhidxzCV9gucrx7AiKoyAaQmA65fnQWxKs=
+github.com/Iteam1337/go-protobuf-wejay v0.0.0-20200320200735-7ba226a0e52c h1:cMBpKapfi+e6LO/PWlhgZXCF1wBmqLHqiQcwSvj6JEU=
+github.com/Iteam1337/go-protobuf-wejay v0.0.0-20200320200735-7ba226a0e52c/go.mod h1:FcQPg/k0jUhidxzCV9gucrx7AiKoyAaQmA65fnQWxKs=
+github.com/Iteam1337/go-protobuf-wejay v0.0.0-20200320201859-8a8ffff8161c h1:EgYXRcIORxHyPfG6zQlnoCvOnOJ3EI9xzhe99uiXn7s=
+github.com/Iteam1337/go-protobuf-wejay v0.0.0-20200320201859-8a8ffff8161c/go.mod h1:FcQPg/k0jUhidxzCV9gucrx7AiKoyAaQmA65fnQWxKs=
 github.com/golang/protobuf v1.2.0 h1:P3YflyNX/ehuJFLhxviNdFxQPkGK5cDcApsge1SqnvM=
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 github.com/golang/protobuf v1.3.5 h1:F768QJ1E9tib+q5Sc8MkdJi1RxLTbRcTf8LJV56aRls=
