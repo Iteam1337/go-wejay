@@ -5,7 +5,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/Iteam1337/go-wejay/message"
+	"github.com/Iteam1337/go-protobuf-wejay/message"
 	"github.com/golang/protobuf/proto"
 )
 
