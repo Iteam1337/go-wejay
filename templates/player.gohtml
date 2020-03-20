@@ -2,12 +2,24 @@
 {{template "Header"}}
 <body>
 	{{if .NowPlaying}}{{.NowPlaying}}{{end}}
-	<ul>
-		<li><a href="/action/play">Play</a></li>
-		<li><a href="/action/pause">Pause</a></li>
-		<li><a href="/action/next">Next track</a></li>
-		<li><a href="/action/previous">Previous Track</a></li>
-		<li><a href="/action/shuffle">Shuffle</a></li>
+	<ul class="list">
+		<li><button type="button" target="/action/play">Play</button></li>
+		<li><button type="button" target="/action/pause">Pause</button></li>
+		<li><button type="button" target="/action/next">Next track</button></li>
+		<li><button type="button" target="/action/previous">Previous Track</button></li>
+		<li><button type="button" target="/action/shuffle">Shuffle</button></li>
 	</ul>
+	<script>
+		[...document.querySelectorAll('ul button')].map(element => {
+			const target = element.getAttribute('target')
+			element.onclick = async () => {
+				const req = await fetch(target)
+				const json = await req.json()
+				if (!json.ok) {
+					alert(json.message)
+				}
+			}
+		})
+	</script>
 </body>
 {{end}}

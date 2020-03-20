@@ -21,6 +21,12 @@ type tmplPlayer struct {
 	NowPlaying template.HTML
 }
 
+type tmplNowPlaying struct {
+	Artists string
+	Track   string
+	State   string
+}
+
 // TmplBase …
 func TmplBase(w io.Writer, html string) {
 	tmpl.ExecuteTemplate(w, "base", tmplBase{
@@ -38,6 +44,15 @@ func TmplPlayer(w io.Writer, nowPlaying string) {
 // TmplNewAuth …
 func TmplNewAuth(w io.Writer, signIn string) {
 	tmpl.ExecuteTemplate(w, "newAuth", tmplNewAuth{signIn})
+}
+
+// TmplNowPlaying …
+func TmplNowPlaying(w io.Writer, artists string, track string) {
+	tmpl.ExecuteTemplate(w, "nowPlaying", tmplNowPlaying{
+		Artists: artists,
+		Track:   track,
+		State:   "Now Playing",
+	})
 }
 
 func init() {

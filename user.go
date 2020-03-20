@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"strings"
 
@@ -69,12 +68,12 @@ func (u *User) RunAction(action Action) (err error) {
 }
 
 // NowPlaying …
-func (u User) NowPlaying() (html string) {
+func (u User) NowPlaying() (artist string, track string) {
 	client := u.getClient()
 
 	currentlyPlaying, err := client.PlayerCurrentlyPlaying()
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		return
 	}
 
@@ -87,16 +86,8 @@ func (u User) NowPlaying() (html string) {
 	for _, key := range item.Artists {
 		artists = append(artists, key.Name)
 	}
-	artist := strings.Join(artists, ", ")
 
-	html = fmt.Sprintf(`
-	<div>
-		<strong>Now playing</strong>
-		<p>
-			<span class="track">%s</span> ­- <span class="artists">%s</span>
-		</p>
-	</div>
-	`, item.SimpleTrack.Name, artist)
-
+	artist = strings.Join(artists, ", ")
+	track = item.SimpleTrack.Name
 	return
 }
