@@ -9,7 +9,7 @@ import (
 
 	"github.com/Iteam1337/go-protobuf-wejay/message"
 	"github.com/Iteam1337/go-protobuf-wejay/types"
-	json "github.com/Iteam1337/go-wejay/jsonResponses"
+	"github.com/Iteam1337/go-wejay/jsonresponses"
 	"github.com/Iteam1337/go-wejay/utils"
 	"github.com/google/uuid"
 )
@@ -88,7 +88,7 @@ func ServerListen() {
 	http.HandleFunc("/action/", func(w http.ResponseWriter, r *http.Request) {
 		id, err := GetIDFromCookie(r)
 		if err != nil {
-			json.NewPlayerResponseErr(w, "missing id")
+			jsonresponses.NewPlayerResponseErr(w, "missing id")
 			return
 		}
 
@@ -97,7 +97,7 @@ func ServerListen() {
 		err = updServer.NewRequest(types.IUserExists, &message.UserExists{UserId: id}, &userExists)
 		log.Println("action", "userExists", id, userExists.Ok, userExists.Exists)
 		if !userExists.Ok || !userExists.Exists {
-			json.NewPlayerResponseErr(w, "couldn't find user")
+			jsonresponses.NewPlayerResponseErr(w, "couldn't find user")
 			return
 		}
 
@@ -107,11 +107,11 @@ func ServerListen() {
 		var actionRes message.ActionResponse
 		err = updServer.NewRequest(types.IAction, &message.Action{UserId: id, Action: action}, &actionRes)
 		if !actionRes.Ok {
-			json.NewPlayerResponseErr(w, actionRes.Error)
+			jsonresponses.NewPlayerResponseErr(w, actionRes.Error)
 			return
 		}
 
-		json.NewPlayerResponse(w, fmt.Sprintf("action %s applied successful", actionStr))
+		jsonresponses.NewPlayerResponse(w, fmt.Sprintf("action %s applied successful", actionStr))
 	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

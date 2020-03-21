@@ -1,4 +1,4 @@
-package jsonResponses
+package jsonresponses
 
 import (
 	"encoding/json"
