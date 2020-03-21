@@ -3,7 +3,7 @@ module github.com/Iteam1337/go-wejay
 go 1.13
 
 require (
-	github.com/Iteam1337/go-protobuf-wejay v0.0.0-20200320201859-8a8ffff8161c
+	github.com/Iteam1337/go-protobuf-wejay v0.0.0-20200321121358-2289555a601c
 	github.com/golang/protobuf v1.3.5
 	github.com/google/uuid v1.1.1
 	github.com/joho/godotenv v1.3.0

@@ -39,12 +39,17 @@ func ServerListen() {
 	http.HandleFunc("/player/", func(w http.ResponseWriter, r *http.Request) {
 		id, err := GetIDFromCookie(w, r)
 		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		// UserExists <-
 		var userExists message.UserExistsResponse
-		err = updServer.NewRequest(types.IUserExists, &message.UserExists{UserId: id}, &userExists)
+		if err = updServer.NewRequest(types.IUserExists, &message.UserExists{UserId: id}, &userExists); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
 		log.Println("player", "userExists", id, userExists.Ok, userExists.Exists)
 		if !userExists.Ok || !userExists.Exists {
 			http.Redirect(w, r, "//"+r.Host+"/new-auth", 307)
@@ -54,13 +59,21 @@ func ServerListen() {
 		w.Header().Set("Content-Type", "text/html")
 
 		// NowPlaying <-
-		// artists, track := user.NowPlaying()
-		// var tpl bytes.Buffer
-		// TmplNowPlaying(&tpl, artists, track)
-		// TmplPlayer(w, tpl.String())
+		var nowPlaying message.NowPlayingResponse
+		if err := updServer.NewRequest(types.INowPlaying, &message.NowPlaying{UserId: id}, &nowPlaying); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+
+		log.Println("player", "nowPlaying", id, nowPlaying.Track)
+
+		track := nowPlaying.Track
+		var artists []string
+		for _, key := range track.Artists {
+			artists = append(artists, key.Name)
+		}
 
 		var tpl bytes.Buffer
-		TmplNowPlaying(&tpl, "", "")
+		TmplNowPlaying(&tpl, strings.Join(artists, ", "), track.Name)
 		TmplPlayer(w, tpl.String())
 	})
 
