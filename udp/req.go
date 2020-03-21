@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/Iteam1337/go-protobuf-wejay/message"
 	"github.com/Iteam1337/go-protobuf-wejay/types"
 	"github.com/golang/protobuf/proto"
 )
@@ -24,11 +25,31 @@ func (r *Req) newConn() (conn net.Conn, err error) {
 }
 
 // Listen …
-func (r *Req) Listen(msg chan []byte) {
+func (r *Req) Listen(msg *chan []byte, id string, closeConn *chan bool) {
 	var conn net.Conn
 	var err error
+	close := func() {
+		conn.Close()
+		*closeConn <- true
+	}
+
 	conn, err = r.newConn()
 	if err != nil {
+		return
+	}
+
+	in := message.Listen{UserId: id}
+	data, err := proto.Marshal(&in)
+	if err != nil {
+		log.Println(err)
+		close()
+		return
+	}
+
+	ver := types.IListen.ByteAndVersion()
+	if _, err = conn.Write(append(ver[:], data[:]...)); err != nil {
+		log.Println(err)
+		close()
 		return
 	}
 
@@ -46,10 +67,10 @@ loop:
 			break loop
 		}
 
-		msg <- buffer[2:byteLen]
+		*msg <- buffer[2:byteLen]
 	}
 
-	conn.Close()
+	close()
 }
 
 // NewRequest …
@@ -59,7 +80,6 @@ func (r *Req) NewRequest(m types.MessageType, in proto.Message, out proto.Messag
 		conn.Close()
 	}
 	conn, err = r.newConn()
-
 	if err != nil {
 		return
 	}

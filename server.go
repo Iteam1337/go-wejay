@@ -38,7 +38,6 @@ func ServerListen() {
 		} else {
 			http.Redirect(w, r, "//"+r.Host+"/player", 307)
 		}
-		log.Println(res)
 	})
 
 	http.HandleFunc("/player/", func(w http.ResponseWriter, r *http.Request) {
@@ -55,7 +54,6 @@ func ServerListen() {
 			return
 		}
 
-		log.Println("player", "userExists", id, userExists.Ok, userExists.Exists)
 		if !userExists.Ok || !userExists.Exists {
 			http.Redirect(w, r, "//"+r.Host+"/new-auth", 307)
 			return
@@ -68,8 +66,6 @@ func ServerListen() {
 		if err := updServer.NewRequest(types.INowPlaying, &message.NowPlaying{UserId: id}, &nowPlaying); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
-
-		log.Println("player", "nowPlaying", id, nowPlaying.Track)
 
 		var artist string = ""
 		var trackName string = ""
@@ -100,7 +96,6 @@ func ServerListen() {
 		// UserExists <-
 		var userExists message.UserExistsResponse
 		err = updServer.NewRequest(types.IUserExists, &message.UserExists{UserId: id}, &userExists)
-		log.Println("action", "userExists", id, userExists.Ok, userExists.Exists)
 		if !userExists.Ok || !userExists.Exists {
 			jsonresponses.NewPlayerResponseErr(w, "couldn't find user")
 			return

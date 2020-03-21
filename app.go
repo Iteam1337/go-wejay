@@ -20,7 +20,7 @@ var (
 	wsaddr      = fmt.Sprintf("%s/ws", utils.Getenv("WS_ADDR", fmt.Sprintf("ws://%s", addr)))
 	redirectURL = utils.Getenv("REDIRECT_URL", "http://localhost:8080/callback")
 	spotifyAuth = spotify.NewAuthenticator(redirectURL, spotify.ScopeUserReadCurrentlyPlaying, spotify.ScopeUserReadPlaybackState, spotify.ScopeUserModifyPlaybackState)
-	updServer   = udp.Connect(udpHost, true)
+	updServer   = udp.Connect(udpHost)
 )
 
 func main() {

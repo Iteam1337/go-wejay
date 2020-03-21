@@ -15,16 +15,14 @@
 			element.onclick = async () => {
 				const req = await fetch(target)
 				const json = await req.json()
-				if (!json.ok) {
-					alert(json.message)
-				}
+				if (!json.ok) alert(json.message)
 			}
 		})
 
 		const socket = new WebSocket('{{.WS | html}}')
-    socket.onopen = () => console.log('connected')
-    socket.onclose = e => console.log(`connection closed (${e.code})`)
-    socket.onmessage = e => console.log('message received', e.data)
+		socket.onopen = () => console.log('connected')
+		socket.onclose = e => console.log(`close: ${e.code}`)
+		socket.onmessage = e => console.log('message received', e.data)
 	</script>
 </body>
 {{end}}
