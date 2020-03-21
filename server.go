@@ -37,9 +37,9 @@ func ServerListen() {
 	})
 
 	http.HandleFunc("/player/", func(w http.ResponseWriter, r *http.Request) {
-		id, err := GetIDFromCookie(w, r)
+		id, err := GetIDFromCookie(r)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			http.Redirect(w, r, "//"+r.Host+"/", 307)
 			return
 		}
 
@@ -66,19 +66,27 @@ func ServerListen() {
 
 		log.Println("player", "nowPlaying", id, nowPlaying.Track)
 
+		var artist string = ""
+		var trackName string = ""
+
 		track := nowPlaying.Track
-		var artists []string
-		for _, key := range track.Artists {
-			artists = append(artists, key.Name)
+		if track != nil {
+			var artists []string
+			for _, key := range track.Artists {
+				artists = append(artists, key.Name)
+			}
+			artist = strings.Join(artists, ", ")
+			trackName = track.Name
 		}
 
 		var tpl bytes.Buffer
-		TmplNowPlaying(&tpl, strings.Join(artists, ", "), track.Name)
+
+		TmplNowPlaying(&tpl, artist, trackName)
 		TmplPlayer(w, tpl.String())
 	})
 
 	http.HandleFunc("/action/", func(w http.ResponseWriter, r *http.Request) {
-		id, err := GetIDFromCookie(w, r)
+		id, err := GetIDFromCookie(r)
 		if err != nil {
 			json.NewPlayerResponseErr(w, "missing id")
 			return
@@ -115,7 +123,7 @@ func ServerListen() {
 		var cb message.CallbackURLResponse
 		var ex message.UserExistsResponse
 
-		id, _ = GetIDFromCookie(w, r)
+		id, _ = GetIDFromCookie(r)
 		if id != "" {
 			updServer.NewRequest(
 				types.IUserExists,

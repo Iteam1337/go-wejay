@@ -6,7 +6,24 @@ import (
 )
 
 // GetIDFromCookie …
-func GetIDFromCookie(w http.ResponseWriter, r *http.Request) (id string, err error) {
+func GetIDFromCookie(r *http.Request) (id string, err error) {
+	var idChars []byte
+	cookie, err := r.Cookie("user")
+	if err != nil {
+		return
+	}
+
+	idChars, err = base64.StdEncoding.DecodeString(cookie.Value)
+	if err != nil {
+		return
+	}
+
+	id = string(idChars)
+	return
+}
+
+// GetIDFromCookieORreturn403 …
+func GetIDFromCookieORreturn403(w http.ResponseWriter, r *http.Request) (id string, err error) {
 	var idChars []byte
 	cookie, err := r.Cookie("user")
 	if err != nil {
