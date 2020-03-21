@@ -56,5 +56,5 @@ func NowPlaying(w io.Writer, artists string, track string) {
 }
 
 func init() {
-	tmpl = template.Must(template.ParseGlob("./templates/*.gohtml"))
+	tmpl = template.Must(template.ParseGlob("./src/templates/*.gohtml"))
 }

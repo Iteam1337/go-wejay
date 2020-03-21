@@ -19,7 +19,7 @@ import (
 
 // ServerListen …
 func ServerListen() {
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./src/static"))))
 
 	http.HandleFunc("/callback", func(w http.ResponseWriter, r *http.Request) {
 		var res message.NewUserResponse
