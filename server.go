@@ -15,13 +15,12 @@ import (
 	"github.com/Iteam1337/go-wejay/tmpl"
 	"github.com/Iteam1337/go-wejay/utils"
 	"github.com/google/uuid"
-	"golang.org/x/net/websocket"
 )
 
 // ServerListen …
 func ServerListen() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
-	http.Handle("/ws", websocket.Handler(wsListen))
+	http.HandleFunc("/ws", wsListen)
 
 	http.HandleFunc("/callback", func(w http.ResponseWriter, r *http.Request) {
 		var res message.NewUserResponse
@@ -38,6 +37,26 @@ func ServerListen() {
 		} else {
 			http.Redirect(w, r, "//"+r.Host+"/player", 307)
 		}
+	})
+
+	http.HandleFunc("/remove-user", func(w http.ResponseWriter, r *http.Request) {
+		id, err := cookie.GetID(r)
+		if err != nil {
+			http.Redirect(w, r, "//"+r.Host+"/", 307)
+			return
+		}
+
+		cookie.Expire(w, r)
+
+		var del message.DeleteUser
+		err = updServer.NewRequest(types.IDeleteUser, &message.DeleteUser{UserId: id}, &del)
+
+		if err != nil {
+			http.Redirect(w, r, "//"+r.Host+"/", 307)
+			return
+		}
+
+		http.Redirect(w, r, "//"+r.Host+"/", 307)
 	})
 
 	http.HandleFunc("/player/", func(w http.ResponseWriter, r *http.Request) {

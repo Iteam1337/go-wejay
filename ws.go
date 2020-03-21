@@ -3,17 +3,25 @@ package main
 import (
 	"encoding/json"
 	"log"
+	"net/http"
 
 	"github.com/Iteam1337/go-protobuf-wejay/message"
 	"github.com/Iteam1337/go-wejay/cookie"
 	"github.com/Iteam1337/go-wejay/jsonresponses"
 	"github.com/golang/protobuf/proto"
-	"golang.org/x/net/websocket"
+	"github.com/gorilla/websocket"
 )
 
-func wsListen(ws *websocket.Conn) {
-	var err error
-	id, err := cookie.GetID(ws.Request())
+var upgrader = websocket.Upgrader{}
+
+func wsListen(w http.ResponseWriter, r *http.Request) {
+	c, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Print("upgrade:", err)
+		return
+	}
+	defer c.Close()
+	id, err := cookie.GetID(r)
 	if err != nil {
 		return
 	}
@@ -26,10 +34,14 @@ func wsListen(ws *websocket.Conn) {
 
 	for {
 		buf := <-msg
-
 		out := message.ListenResponse{}
 		if err = proto.Unmarshal(buf, &out); err != nil {
 			log.Println(err)
+			continue
+		}
+
+		if !out.Ok || out.Error != "" {
+			log.Println("ws res err", out.Ok, out.Error)
 			continue
 		}
 
@@ -37,7 +49,7 @@ func wsListen(ws *websocket.Conn) {
 			jsonresponses.ListenResponseFromMessage(out),
 		)
 
-		if err = websocket.Message.Send(ws, string(json)); err != nil {
+		if err = c.WriteMessage(websocket.TextMessage, json); err != nil {
 			log.Println("ws can't send")
 			break
 		}

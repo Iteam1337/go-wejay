@@ -3,6 +3,7 @@ package cookie
 import (
 	"encoding/base64"
 	"net/http"
+	"time"
 )
 
 // GetID …
@@ -20,6 +21,18 @@ func GetID(r *http.Request) (id string, err error) {
 
 	id = string(idChars)
 	return
+}
+
+// Expire …
+func Expire(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("user")
+	if err != nil {
+		return
+	}
+
+	cookie.Expires = time.Now()
+
+	http.SetCookie(w, cookie)
 }
 
 // GetIDORreturn403 …
