@@ -1,4 +1,4 @@
-package main
+package tmpl
 
 import (
 	"html/template"
@@ -27,27 +27,27 @@ type tmplNowPlaying struct {
 	State   string
 }
 
-// TmplBase …
-func TmplBase(w io.Writer, html string) {
+// Base …
+func Base(w io.Writer, html string) {
 	tmpl.ExecuteTemplate(w, "base", tmplBase{
 		HTML: template.HTML(html),
 	})
 }
 
-// TmplPlayer …
-func TmplPlayer(w io.Writer, nowPlaying string) {
+// Player …
+func Player(w io.Writer, nowPlaying string) {
 	tmpl.ExecuteTemplate(w, "player", tmplPlayer{
 		NowPlaying: template.HTML(nowPlaying),
 	})
 }
 
-// TmplNewAuth …
-func TmplNewAuth(w io.Writer, signIn string) {
+// NewAuth …
+func NewAuth(w io.Writer, signIn string) {
 	tmpl.ExecuteTemplate(w, "newAuth", tmplNewAuth{signIn})
 }
 
-// TmplNowPlaying …
-func TmplNowPlaying(w io.Writer, artists string, track string) {
+// NowPlaying …
+func NowPlaying(w io.Writer, artists string, track string) {
 	tmpl.ExecuteTemplate(w, "nowPlaying", tmplNowPlaying{
 		Artists: artists,
 		Track:   track,

@@ -1,12 +1,12 @@
-package main
+package cookie
 
 import (
 	"encoding/base64"
 	"net/http"
 )
 
-// GetIDFromCookie …
-func GetIDFromCookie(r *http.Request) (id string, err error) {
+// GetID …
+func GetID(r *http.Request) (id string, err error) {
 	var idChars []byte
 	cookie, err := r.Cookie("user")
 	if err != nil {
@@ -22,8 +22,8 @@ func GetIDFromCookie(r *http.Request) (id string, err error) {
 	return
 }
 
-// GetIDFromCookieORreturn403 …
-func GetIDFromCookieORreturn403(w http.ResponseWriter, r *http.Request) (id string, err error) {
+// GetIDORreturn403 …
+func GetIDORreturn403(w http.ResponseWriter, r *http.Request) (id string, err error) {
 	var idChars []byte
 	cookie, err := r.Cookie("user")
 	if err != nil {
@@ -40,8 +40,8 @@ func GetIDFromCookieORreturn403(w http.ResponseWriter, r *http.Request) (id stri
 	return
 }
 
-// CreateAndSetCookie …
-func CreateAndSetCookie(w http.ResponseWriter, r *http.Request) (id string) {
+// CreateAndSet …
+func CreateAndSet(w http.ResponseWriter, r *http.Request) (id string) {
 	id = r.FormValue("state")
 	if id == "" {
 		http.NotFound(w, r)

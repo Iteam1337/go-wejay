@@ -1,4 +1,4 @@
-package main
+package action
 
 import (
 	"strings"
@@ -6,7 +6,8 @@ import (
 	"github.com/Iteam1337/go-protobuf-wejay/message"
 )
 
-func actionFromString(action string) message.Action_ActionType {
+// FromString …
+func FromString(action string) message.Action_ActionType {
 	switch strings.ToLower(action) {
 	case "play":
 		return message.Action_PLAY

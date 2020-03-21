@@ -9,7 +9,10 @@ import (
 
 	"github.com/Iteam1337/go-protobuf-wejay/message"
 	"github.com/Iteam1337/go-protobuf-wejay/types"
+	"github.com/Iteam1337/go-wejay/action"
+	"github.com/Iteam1337/go-wejay/cookie"
 	"github.com/Iteam1337/go-wejay/jsonresponses"
+	"github.com/Iteam1337/go-wejay/tmpl"
 	"github.com/Iteam1337/go-wejay/utils"
 	"github.com/google/uuid"
 )
@@ -21,7 +24,7 @@ func ServerListen() {
 	http.HandleFunc("/callback", func(w http.ResponseWriter, r *http.Request) {
 		var res message.NewUserResponse
 
-		id := CreateAndSetCookie(w, r)
+		id := cookie.CreateAndSet(w, r)
 		code, err := utils.ParseRequest(id, r)
 
 		if err = updServer.NewRequest(
@@ -37,7 +40,7 @@ func ServerListen() {
 	})
 
 	http.HandleFunc("/player/", func(w http.ResponseWriter, r *http.Request) {
-		id, err := GetIDFromCookie(r)
+		id, err := cookie.GetID(r)
 		if err != nil {
 			http.Redirect(w, r, "//"+r.Host+"/", 307)
 			return
@@ -81,12 +84,12 @@ func ServerListen() {
 
 		var tpl bytes.Buffer
 
-		TmplNowPlaying(&tpl, artist, trackName)
-		TmplPlayer(w, tpl.String())
+		tmpl.NowPlaying(&tpl, artist, trackName)
+		tmpl.Player(w, tpl.String())
 	})
 
 	http.HandleFunc("/action/", func(w http.ResponseWriter, r *http.Request) {
-		id, err := GetIDFromCookie(r)
+		id, err := cookie.GetID(r)
 		if err != nil {
 			jsonresponses.NewPlayerResponseErr(w, "missing id")
 			return
@@ -103,7 +106,7 @@ func ServerListen() {
 
 		// Action <-
 		actionStr := strings.TrimPrefix(r.URL.Path, "/action/")
-		action := actionFromString(actionStr)
+		action := action.FromString(actionStr)
 		var actionRes message.ActionResponse
 		err = updServer.NewRequest(types.IAction, &message.Action{UserId: id, Action: action}, &actionRes)
 		if !actionRes.Ok {
@@ -115,7 +118,7 @@ func ServerListen() {
 	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		TmplBase(w, `<a href="/new-auth">new auth</a>`)
+		tmpl.Base(w, `<a href="/new-auth">new auth</a>`)
 	})
 
 	http.HandleFunc("/new-auth", func(w http.ResponseWriter, r *http.Request) {
@@ -123,7 +126,7 @@ func ServerListen() {
 		var cb message.CallbackURLResponse
 		var ex message.UserExistsResponse
 
-		id, _ = GetIDFromCookie(r)
+		id, _ = cookie.GetID(r)
 		if id != "" {
 			updServer.NewRequest(
 				types.IUserExists,
@@ -148,7 +151,7 @@ func ServerListen() {
 		}
 
 		w.Header().Set("Content-Type", "text/html")
-		TmplNewAuth(w, cb.Url)
+		tmpl.NewAuth(w, cb.Url)
 	})
 
 	log.Printf("Listen on %s\n", addr)
