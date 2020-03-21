@@ -19,6 +19,7 @@ type tmplNewAuth struct {
 
 type tmplPlayer struct {
 	NowPlaying template.HTML
+	WS         template.URL
 }
 
 type tmplNowPlaying struct {
@@ -35,9 +36,10 @@ func Base(w io.Writer, html string) {
 }
 
 // Player …
-func Player(w io.Writer, nowPlaying string) {
+func Player(w io.Writer, nowPlaying string, ws string) {
 	tmpl.ExecuteTemplate(w, "player", tmplPlayer{
 		NowPlaying: template.HTML(nowPlaying),
+		WS:         template.URL(ws),
 	})
 }
 

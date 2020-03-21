@@ -15,11 +15,13 @@ import (
 	"github.com/Iteam1337/go-wejay/tmpl"
 	"github.com/Iteam1337/go-wejay/utils"
 	"github.com/google/uuid"
+	"golang.org/x/net/websocket"
 )
 
 // ServerListen …
 func ServerListen() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+	http.Handle("/ws", websocket.Handler(wsListen))
 
 	http.HandleFunc("/callback", func(w http.ResponseWriter, r *http.Request) {
 		var res message.NewUserResponse
@@ -85,7 +87,7 @@ func ServerListen() {
 		var tpl bytes.Buffer
 
 		tmpl.NowPlaying(&tpl, artist, trackName)
-		tmpl.Player(w, tpl.String())
+		tmpl.Player(w, tpl.String(), fmt.Sprintf("ws://%s/ws", addr))
 	})
 
 	http.HandleFunc("/action/", func(w http.ResponseWriter, r *http.Request) {
