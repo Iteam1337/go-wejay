@@ -17,30 +17,21 @@ func ServerListen() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
 	http.HandleFunc("/callback", func(w http.ResponseWriter, r *http.Request) {
+		var res message.NewUserResponse
+
 		id := CreateAndSetCookie(w, r)
 		code, err := utils.ParseRequest(id, r)
 
-		var res message.NewUserResponse
-		err = updServer.NewRequest(
+		if err = updServer.NewRequest(
 			types.INewUser,
 			&message.NewUser{UserId: id, Code: code},
 			&res,
-		)
-		if err != nil {
+		); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
+		} else {
+			http.Redirect(w, r, "//"+r.Host+"/player", 307)
 		}
-
 		log.Println(res)
-
-		http.NotFound(w, r)
-
-		// if user, ok := users[id]; ok {
-		// 	// user.SetClient(token)
-		// 	http.Redirect(w, r, "//"+r.Host+"/player", 307)
-		// } else {
-		// 	http.NotFound(w, r)
-		// }
 	})
 
 	http.HandleFunc("/player/", func(w http.ResponseWriter, r *http.Request) {
@@ -74,12 +65,12 @@ func ServerListen() {
 			return
 		}
 
-		log.Println(id)
+		log.Println("action", id)
 
 		// UserExists <-
 		var userExists message.UserExistsResponse
 		err = updServer.NewRequest(types.IUserExists, &message.UserExists{UserId: id}, &userExists)
-		log.Println(userExists)
+		log.Println("userExists", userExists)
 		if !userExists.Ok {
 			return
 		}
@@ -110,19 +101,36 @@ func ServerListen() {
 	})
 
 	http.HandleFunc("/new-auth", func(w http.ResponseWriter, r *http.Request) {
-		id := uuid.New().String()
-		var res message.CallbackURLResponse
+		var id string
+		var cb message.CallbackURLResponse
+		var ex message.UserExistsResponse
+
+		id, _ = GetIDFromCookie(w, r)
+		if id != "" {
+			updServer.NewRequest(
+				types.IUserExists,
+				&message.UserExists{UserId: id},
+				&ex,
+			)
+
+			if ex.Exists {
+				http.Redirect(w, r, "//"+r.Host+"/player", 307)
+				return
+			}
+		}
+
+		id = uuid.New().String()
 		if err := updServer.NewRequest(
 			types.ICallbackURL,
 			&message.CallbackURL{UserId: id},
-			&res,
+			&cb,
 		); err != nil {
 			http.Error(w, "Couldn't get callback-url", http.StatusBadRequest)
 			return
 		}
 
 		w.Header().Set("Content-Type", "text/html")
-		TmplNewAuth(w, res.Url)
+		TmplNewAuth(w, cb.Url)
 	})
 
 	log.Printf("Listen on %s\n", addr)
