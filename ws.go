@@ -6,6 +6,7 @@ import (
 
 	"github.com/Iteam1337/go-protobuf-wejay/message"
 	"github.com/Iteam1337/go-wejay/cookie"
+	"github.com/Iteam1337/go-wejay/jsonresponses"
 	"github.com/golang/protobuf/proto"
 	"golang.org/x/net/websocket"
 )
@@ -32,11 +33,9 @@ func wsListen(ws *websocket.Conn) {
 			continue
 		}
 
-		json, err := json.Marshal(out)
-		if err != nil {
-			log.Println(err)
-			continue
-		}
+		json, _ := json.Marshal(
+			jsonresponses.ListenResponseFromMessage(out),
+		)
 
 		if err = websocket.Message.Send(ws, string(json)); err != nil {
 			log.Println("ws can't send")
