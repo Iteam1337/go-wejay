@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -40,22 +42,26 @@ func ServerListen() {
 			return
 		}
 
-		log.Println(id)
+		// UserExists <-
+		var userExists message.UserExistsResponse
+		err = updServer.NewRequest(types.IUserExists, &message.UserExists{UserId: id}, &userExists)
+		log.Println("player", "userExists", id, userExists.Ok, userExists.Exists)
+		if !userExists.Ok || !userExists.Exists {
+			http.Redirect(w, r, "//"+r.Host+"/new-auth", 307)
+			return
+		}
 
-		http.NotFound(w, r)
+		w.Header().Set("Content-Type", "text/html")
 
-		// // user, ok := users[string(id)]
-		// if !ok {
-		// 	http.Redirect(w, r, "//"+r.Host+"/new-auth", 307)
-		// 	return
-		// }
-
-		// w.Header().Set("Content-Type", "text/html")
-
+		// NowPlaying <-
 		// artists, track := user.NowPlaying()
 		// var tpl bytes.Buffer
 		// TmplNowPlaying(&tpl, artists, track)
 		// TmplPlayer(w, tpl.String())
+
+		var tpl bytes.Buffer
+		TmplNowPlaying(&tpl, "", "")
+		TmplPlayer(w, tpl.String())
 	})
 
 	http.HandleFunc("/action/", func(w http.ResponseWriter, r *http.Request) {
@@ -65,35 +71,26 @@ func ServerListen() {
 			return
 		}
 
-		log.Println("action", id)
-
 		// UserExists <-
 		var userExists message.UserExistsResponse
 		err = updServer.NewRequest(types.IUserExists, &message.UserExists{UserId: id}, &userExists)
-		log.Println("userExists", userExists)
-		if !userExists.Ok {
+		log.Println("action", "userExists", id, userExists.Ok, userExists.Exists)
+		if !userExists.Ok || !userExists.Exists {
+			json.NewPlayerResponseErr(w, "couldn't find user")
 			return
 		}
 
 		// Action <-
-		action := actionFromString(strings.TrimPrefix(r.URL.Path, "/action/"))
+		actionStr := strings.TrimPrefix(r.URL.Path, "/action/")
+		action := actionFromString(actionStr)
 		var actionRes message.ActionResponse
 		err = updServer.NewRequest(types.IAction, &message.Action{UserId: id, Action: action}, &actionRes)
+		if !actionRes.Ok {
+			json.NewPlayerResponseErr(w, actionRes.Error)
+			return
+		}
 
-		log.Println(actionRes)
-
-		// user, ok := users[string(id)]
-		// if !ok {
-		// 	json.NewPlayerResponseErr(w, "user not found")
-		// 	return
-		// }
-
-		// if err := user.RunAction(ActionFromString(action)); err != nil {
-		// 	json.NewPlayerResponseErr(w, err.Error())
-		// 	return
-		// }
-
-		// json.NewPlayerResponse(w, fmt.Sprintf("action %s applied successful", action))
+		json.NewPlayerResponse(w, fmt.Sprintf("action %s applied successful", actionStr))
 	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
