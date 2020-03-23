@@ -19,10 +19,14 @@
 			}
 		})
 
-		const socket = new WebSocket('{{.WS | html}}')
-		socket.onopen = () => console.log('connected')
-		socket.onclose = e => console.log(`close: ${e.code}`)
-		socket.onmessage = e => console.log('message received', e.data)
+		let ws = new WebSocket('{{.WS | html}}')
+		ws.onopen = () => console.log('connected')
+		ws.onclose = e => {
+			console.log(`close: ${e.code}`)
+			ws = null
+		}
+		ws.onerror = () => {}
+		ws.onmessage = e => console.log('message received', e.data)
 	</script>
 </body>
 {{end}}
