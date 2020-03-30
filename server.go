@@ -26,9 +26,9 @@ func ServerListen() {
 		var res message.NewUserResponse
 
 		id := cookie.CreateAndSet(w, r)
-		code, err := utils.ParseRequest(id, r)
+		code, _ := utils.ParseRequest(id, r)
 
-		if err = updServer.NewRequest(
+		if err := updServer.NewRequest(
 			types.INewUser,
 			&message.NewUser{UserId: id, Code: code},
 			&res,
@@ -114,7 +114,7 @@ func ServerListen() {
 
 		// UserExists <-
 		var userExists message.UserExistsResponse
-		err = updServer.NewRequest(types.IUserExists, &message.UserExists{UserId: id}, &userExists)
+		updServer.NewRequest(types.IUserExists, &message.UserExists{UserId: id}, &userExists)
 		if !userExists.Ok || !userExists.Exists {
 			jsonresponses.NewPlayerResponseErr(w, "couldn't find user")
 			return
@@ -124,7 +124,7 @@ func ServerListen() {
 		actionStr := strings.TrimPrefix(r.URL.Path, "/action/")
 		action := action.FromString(actionStr)
 		var actionRes message.ActionResponse
-		err = updServer.NewRequest(types.IAction, &message.Action{UserId: id, Action: action}, &actionRes)
+		updServer.NewRequest(types.IAction, &message.Action{UserId: id, Action: action}, &actionRes)
 		if !actionRes.Ok {
 			jsonresponses.NewPlayerResponseErr(w, actionRes.Error)
 			return

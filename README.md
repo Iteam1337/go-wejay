@@ -8,4 +8,6 @@ What it aims to to is a shared playlist between multiple users.
 
 ```sh
 go run ./
+# or
+modd
 ```

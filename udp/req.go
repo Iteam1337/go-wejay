@@ -26,8 +26,10 @@ func (r *Req) newConn() (conn net.Conn, err error) {
 
 // Listen …
 func (r *Req) Listen(msg *chan []byte, id string, closeConn *chan bool) {
-	var conn net.Conn
-	var err error
+	var (
+		conn net.Conn
+		err  error
+	)
 	close := func() {
 		conn.Close()
 		*closeConn <- true
@@ -47,7 +49,7 @@ func (r *Req) Listen(msg *chan []byte, id string, closeConn *chan bool) {
 	}
 
 	ver := types.IListen.ByteAndVersion()
-	if _, err = conn.Write(append(ver[:], data[:]...)); err != nil {
+	if _, err := conn.Write(append(ver[:], data[:]...)); err != nil {
 		log.Println(err)
 		close()
 		return
@@ -63,7 +65,7 @@ loop:
 		}
 
 		if byteLen < 2 {
-			err = fmt.Errorf("response length; expected at least 2, got %d", byteLen)
+			fmt.Printf("response length; expected at least 2, got %d", byteLen)
 			break loop
 		}
 
