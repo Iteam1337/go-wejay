@@ -17,44 +17,23 @@ type tmplNewAuth struct {
 	SignIn string
 }
 
-type tmplPlayer struct {
-	NowPlaying template.HTML
-	WS         template.URL
-}
-
-type tmplNowPlaying struct {
-	Artists string
-	Track   string
-	State   string
+type tmplProfile struct {
+	WS template.URL
 }
 
 // Base …
 func Base(w io.Writer, html string) {
-	tmpl.ExecuteTemplate(w, "base", tmplBase{
-		HTML: template.HTML(html),
-	})
+	tmpl.ExecuteTemplate(w, "base", tmplBase{template.HTML(html)})
 }
 
-// Player …
-func Player(w io.Writer, nowPlaying string, ws string) {
-	tmpl.ExecuteTemplate(w, "player", tmplPlayer{
-		NowPlaying: template.HTML(nowPlaying),
-		WS:         template.URL(ws),
-	})
+// Profile …
+func Profile(w io.Writer, ws string) {
+	tmpl.ExecuteTemplate(w, "profile", tmplProfile{template.URL(ws)})
 }
 
 // NewAuth …
 func NewAuth(w io.Writer, signIn string) {
 	tmpl.ExecuteTemplate(w, "newAuth", tmplNewAuth{signIn})
-}
-
-// NowPlaying …
-func NowPlaying(w io.Writer, artists string, track string) {
-	tmpl.ExecuteTemplate(w, "nowPlaying", tmplNowPlaying{
-		Artists: artists,
-		Track:   track,
-		State:   "Now Playing",
-	})
 }
 
 func init() {
