@@ -39,7 +39,7 @@ func ServerListen() {
 		}
 	})
 
-	http.HandleFunc("/remove-user", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/sign-out", func(w http.ResponseWriter, r *http.Request) {
 		id, err := cookie.GetID(r)
 		if err != nil {
 			http.Redirect(w, r, "//"+r.Host+"/", 307)
