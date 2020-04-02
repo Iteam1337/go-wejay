@@ -21,7 +21,7 @@ func (route *routeAuth) NewAuth(w http.ResponseWriter, r *http.Request) {
 	exists, _, err := exists(r)
 
 	if err == nil && exists {
-		http.Redirect(w, r, "//"+r.Host+"/profile", 307)
+		redirect(w, r, "profile")
 		return
 	}
 
@@ -52,7 +52,7 @@ func (route *routeAuth) Callback(w http.ResponseWriter, r *http.Request) {
 	); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	} else {
-		http.Redirect(w, r, "//"+r.Host+"/profile", 307)
+		redirect(w, r, "profile")
 	}
 }
 
@@ -64,7 +64,8 @@ func (route *routeAuth) SignOut(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err != nil || !exists {
-		http.Redirect(w, r, "//"+r.Host+"/", 307)
+		redirect(w, r, "")
+
 		return
 	}
 
@@ -72,9 +73,9 @@ func (route *routeAuth) SignOut(w http.ResponseWriter, r *http.Request) {
 	err = updServer.NewRequest(types.IDeleteUser, &message.DeleteUser{UserId: id}, &del)
 
 	if err != nil {
-		http.Redirect(w, r, "//"+r.Host+"/", 307)
+		redirect(w, r, "")
 		return
 	}
 
-	http.Redirect(w, r, "//"+r.Host+"/", 307)
+	redirect(w, r, "")
 }

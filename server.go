@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -12,8 +13,19 @@ type route struct {
 	main routeMain
 	room routeRoom
 }
+type routePath string
 
 var router = route{}
+
+const (
+	routePathBase    routePath = ""
+	routePathProfile routePath = "profile"
+	routePathNewAuth routePath = "new-auth"
+)
+
+func redirect(w http.ResponseWriter, r *http.Request, path routePath) {
+	http.Redirect(w, r, fmt.Sprintf("//%s/%s", r.Host, path), 307)
+}
 
 func serverListen() {
 	r := mux.NewRouter()
@@ -28,13 +40,6 @@ func serverListen() {
 
 	r.HandleFunc("/profile", router.main.Profile).Methods("GET")
 	r.HandleFunc("/", router.main.Root).Methods("GET")
-
-	// r.Use(func(next http.Handler) http.Handler {
-	// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	// 		log.Println(r.RequestURI)
-	// 		next.ServeHTTP(w, r)
-	// 	})
-	// })
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 	http.Handle("/", r)

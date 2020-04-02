@@ -21,19 +21,19 @@ func (route *routeMain) Root(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "//"+r.Host+"/profile", 307)
+	redirect(w, r, routePathProfile)
 }
 
 func (route *routeMain) Profile(w http.ResponseWriter, r *http.Request) {
 	exists, _, err := exists(r)
 
 	if err != nil {
-		http.Redirect(w, r, "//"+r.Host+"/", 307)
+		redirect(w, r, routePathBase)
 		return
 	}
 
 	if !exists {
-		http.Redirect(w, r, "//"+r.Host+"/new-auth", 307)
+		redirect(w, r, routePathNewAuth)
 		return
 	}
 

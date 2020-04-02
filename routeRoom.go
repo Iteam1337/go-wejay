@@ -84,16 +84,14 @@ func (route *routeRoom) Join(w http.ResponseWriter, r *http.Request) {
 	roomID := route.parsedRoomName(r.URL.Query()["name"])
 
 	if roomID == "" || userID == "" || !exists || err != nil {
-		http.Redirect(w, r, "//"+r.Host+"/", 307)
+		redirect(w, r, routePathBase)
 		return
 	}
 
 	room, ok := route.joinRoom(roomID, userID)
 
-	log.Println("join", room, ok)
-
 	if !ok {
-		http.Redirect(w, r, "//"+r.Host+"/", 307)
+		redirect(w, r, routePathBase)
 		return
 	} else {
 		log.Println(room)
@@ -108,27 +106,17 @@ func (route *routeRoom) Join(w http.ResponseWriter, r *http.Request) {
 func (route *routeRoom) Leave(w http.ResponseWriter, r *http.Request) {
 	exists, id, err := exists(r)
 
-	log.Println("1")
-
 	if err != nil || id == "" || !exists {
-		log.Println("2")
-		http.Error(w, "", http.StatusBadRequest)
+		redirect(w, r, routePathBase)
 		return
 	}
 
-	log.Println("3")
 	if ok := route.leaveRoom(id); !ok {
-		log.Println("4")
-		http.Error(w, "", http.StatusInternalServerError)
+		redirect(w, r, routePathBase)
 		return
 	}
-	log.Println("5")
 
-	w.Header().Set("Content-Type", "application/json")
-	if _, e := w.Write([]byte(`{"path":"/room/leave"}`)); e != nil {
-		log.Println("6")
-		http.Error(w, e.Error(), http.StatusInternalServerError)
-	}
+	redirect(w, r, routePathProfile)
 }
 
 func (route *routeRoom) Query(w http.ResponseWriter, r *http.Request) {
