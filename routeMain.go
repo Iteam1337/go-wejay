@@ -12,7 +12,7 @@ func init() {
 	router.main = routeMain{}
 }
 
-func (route *routeMain) root(w http.ResponseWriter, r *http.Request) {
+func (route *routeMain) Root(w http.ResponseWriter, r *http.Request) {
 	html := `<a href="/new-auth">new auth</a>`
 	exists, _, err := exists(r)
 
@@ -24,7 +24,7 @@ func (route *routeMain) root(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "//"+r.Host+"/profile", 307)
 }
 
-func (route *routeMain) profile(w http.ResponseWriter, r *http.Request) {
+func (route *routeMain) Profile(w http.ResponseWriter, r *http.Request) {
 	exists, _, err := exists(r)
 
 	if err != nil {

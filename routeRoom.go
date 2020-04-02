@@ -5,6 +5,9 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+
+	"github.com/Iteam1337/go-protobuf-wejay/message"
+	"github.com/Iteam1337/go-protobuf-wejay/types"
 )
 
 type routeRoom struct {
@@ -34,27 +37,100 @@ func (route routeRoom) parsedRoomName(input []string) (out string) {
 	return
 }
 
-func (route *routeRoom) join(w http.ResponseWriter, r *http.Request) {
-	room := route.parsedRoomName(r.URL.Query()["name"])
+func (route *routeRoom) joinRoom(roomID string, userID string) (room message.RefRoom, ok bool) {
+	var cb message.JoinRoomResponse
+	if err := updServer.NewRequest(
+		types.IJoinRoom,
+		&message.JoinRoom{
+			RoomId: roomID,
+			UserId: userID,
+		},
+		&cb,
+	); err != nil {
+		log.Println(err)
+	}
 
-	if room == "" {
+	if cb.Ok && cb.Room.Id == roomID && cb.UserId == userID {
+		ok = true
+		room = *cb.Room
+	}
+
+	return
+}
+
+func (route *routeRoom) leaveRoom(userId string) (ok bool) {
+	var cb message.UserLeaveRoomResponse
+	if err := updServer.NewRequest(
+		types.IUserLeaveRoom,
+		&message.UserLeaveRoom{UserId: userId},
+		&cb,
+	); err != nil {
+		log.Println(err)
+	}
+
+	if cb.Error != "" {
+		log.Println(cb.Error)
+	}
+
+	if cb.Ok && cb.UserId == userId {
+		ok = true
+	}
+
+	return
+}
+
+func (route *routeRoom) Join(w http.ResponseWriter, r *http.Request) {
+	exists, userID, err := exists(r)
+	roomID := route.parsedRoomName(r.URL.Query()["name"])
+
+	if roomID == "" || userID == "" || !exists || err != nil {
 		http.Redirect(w, r, "//"+r.Host+"/", 307)
 		return
 	}
 
+	room, ok := route.joinRoom(roomID, userID)
+
+	log.Println("join", room, ok)
+
+	if !ok {
+		http.Redirect(w, r, "//"+r.Host+"/", 307)
+		return
+	} else {
+		log.Println(room)
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	if _, e := w.Write([]byte(`{"path":"/room/` + room + `"}`)); e != nil {
+	if _, e := w.Write([]byte(`{"path":"/room/` + roomID + `"}`)); e != nil {
 		http.Error(w, e.Error(), http.StatusInternalServerError)
 	}
 }
 
-func (route *routeRoom) leave(w http.ResponseWriter, r *http.Request) {
+func (route *routeRoom) Leave(w http.ResponseWriter, r *http.Request) {
+	exists, id, err := exists(r)
+
+	log.Println("1")
+
+	if err != nil || id == "" || !exists {
+		log.Println("2")
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+
+	log.Println("3")
+	if ok := route.leaveRoom(id); !ok {
+		log.Println("4")
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
+	log.Println("5")
+
 	w.Header().Set("Content-Type", "application/json")
 	if _, e := w.Write([]byte(`{"path":"/room/leave"}`)); e != nil {
+		log.Println("6")
 		http.Error(w, e.Error(), http.StatusInternalServerError)
 	}
 }
 
-func (route *routeRoom) rooms(w http.ResponseWriter, r *http.Request) {
+func (route *routeRoom) Query(w http.ResponseWriter, r *http.Request) {
 
 }

@@ -5,7 +5,6 @@ import (
 	"net/http"
 )
 
-// ParseRequest …
 func ParseRequest(state string, r *http.Request) (code string, err error) {
 	values := r.URL.Query()
 

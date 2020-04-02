@@ -17,7 +17,7 @@ func init() {
 	router.auth = routeAuth{}
 }
 
-func (route *routeAuth) newAuth(w http.ResponseWriter, r *http.Request) {
+func (route *routeAuth) NewAuth(w http.ResponseWriter, r *http.Request) {
 	exists, _, err := exists(r)
 
 	if err == nil && exists {
@@ -39,7 +39,7 @@ func (route *routeAuth) newAuth(w http.ResponseWriter, r *http.Request) {
 	tmpl.NewAuth(w, cb.Url)
 }
 
-func (route *routeAuth) callback(w http.ResponseWriter, r *http.Request) {
+func (route *routeAuth) Callback(w http.ResponseWriter, r *http.Request) {
 	var res message.NewUserResponse
 
 	id := cookie.CreateAndSet(w, r)
@@ -56,7 +56,7 @@ func (route *routeAuth) callback(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (route *routeAuth) signOut(w http.ResponseWriter, r *http.Request) {
+func (route *routeAuth) SignOut(w http.ResponseWriter, r *http.Request) {
 	exists, id, err := exists(r)
 
 	if exists {

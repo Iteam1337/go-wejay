@@ -6,7 +6,6 @@ import (
 	"time"
 )
 
-// GetID …
 func GetID(r *http.Request) (id string, err error) {
 	var idChars []byte
 	cookie, err := r.Cookie("user")
@@ -23,7 +22,6 @@ func GetID(r *http.Request) (id string, err error) {
 	return
 }
 
-// Expire …
 func Expire(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("user")
 	if err != nil {
@@ -35,7 +33,6 @@ func Expire(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, cookie)
 }
 
-// GetIDORreturn403 …
 func GetIDORreturn403(w http.ResponseWriter, r *http.Request) (id string, err error) {
 	var idChars []byte
 	cookie, err := r.Cookie("user")
@@ -53,7 +50,6 @@ func GetIDORreturn403(w http.ResponseWriter, r *http.Request) (id string, err er
 	return
 }
 
-// CreateAndSet …
 func CreateAndSet(w http.ResponseWriter, r *http.Request) (id string) {
 	id = r.FormValue("state")
 	if id == "" {

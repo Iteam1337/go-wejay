@@ -5,7 +5,6 @@ import (
 	"strings"
 )
 
-// Getenv …
 func Getenv(key, fallback string) string {
 	value := strings.TrimSpace(os.Getenv(key))
 	if value != "" {
