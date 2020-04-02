@@ -7,15 +7,15 @@ import (
 	"strings"
 )
 
-type routerRoom struct {
+type routeRoom struct {
 	re *regexp.Regexp
 }
 
 func init() {
-	router.room = routerRoom{regexp.MustCompile(`[a-z0-9-]`)}
+	router.room = routeRoom{regexp.MustCompile(`[a-z0-9-]`)}
 }
 
-func (route routerRoom) parsedRoomName(input []string) (out string) {
+func (route routeRoom) parsedRoomName(input []string) (out string) {
 	if input == nil || strings.TrimSpace(input[0]) == "" {
 		return
 	}
@@ -34,7 +34,7 @@ func (route routerRoom) parsedRoomName(input []string) (out string) {
 	return
 }
 
-func (route *routerRoom) join(w http.ResponseWriter, r *http.Request) {
+func (route *routeRoom) join(w http.ResponseWriter, r *http.Request) {
 	room := route.parsedRoomName(r.URL.Query()["name"])
 
 	if room == "" {
@@ -48,13 +48,13 @@ func (route *routerRoom) join(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (route *routerRoom) leave(w http.ResponseWriter, r *http.Request) {
+func (route *routeRoom) leave(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if _, e := w.Write([]byte(`{"path":"/room/leave"}`)); e != nil {
 		http.Error(w, e.Error(), http.StatusInternalServerError)
 	}
 }
 
-func (route *routerRoom) rooms(w http.ResponseWriter, r *http.Request) {
+func (route *routeRoom) rooms(w http.ResponseWriter, r *http.Request) {
 
 }

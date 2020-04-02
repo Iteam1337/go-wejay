@@ -1,19 +1,18 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/Iteam1337/go-wejay/tmpl"
 )
 
-type routerMain struct{}
+type routeMain struct{}
 
 func init() {
-	router.main = routerMain{}
+	router.main = routeMain{}
 }
 
-func (route *routerMain) root(w http.ResponseWriter, r *http.Request) {
+func (route *routeMain) root(w http.ResponseWriter, r *http.Request) {
 	html := `<a href="/new-auth">new auth</a>`
 	exists, _, err := exists(r)
 
@@ -25,7 +24,7 @@ func (route *routerMain) root(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "//"+r.Host+"/profile", 307)
 }
 
-func (route *routerMain) profile(w http.ResponseWriter, r *http.Request) {
+func (route *routeMain) profile(w http.ResponseWriter, r *http.Request) {
 	exists, _, err := exists(r)
 
 	if err != nil {
@@ -40,5 +39,5 @@ func (route *routerMain) profile(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
 
-	tmpl.Profile(w, fmt.Sprintf("ws://%s/ws", addr))
+	tmpl.Profile(w)
 }

@@ -11,13 +11,13 @@ import (
 	"github.com/google/uuid"
 )
 
-type routerAuth struct{}
+type routeAuth struct{}
 
 func init() {
-	router.auth = routerAuth{}
+	router.auth = routeAuth{}
 }
 
-func (route *routerAuth) newAuth(w http.ResponseWriter, r *http.Request) {
+func (route *routeAuth) newAuth(w http.ResponseWriter, r *http.Request) {
 	exists, _, err := exists(r)
 
 	if err == nil && exists {
@@ -39,7 +39,7 @@ func (route *routerAuth) newAuth(w http.ResponseWriter, r *http.Request) {
 	tmpl.NewAuth(w, cb.Url)
 }
 
-func (route *routerAuth) callback(w http.ResponseWriter, r *http.Request) {
+func (route *routeAuth) callback(w http.ResponseWriter, r *http.Request) {
 	var res message.NewUserResponse
 
 	id := cookie.CreateAndSet(w, r)
@@ -56,7 +56,7 @@ func (route *routerAuth) callback(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (route *routerAuth) signOut(w http.ResponseWriter, r *http.Request) {
+func (route *routeAuth) signOut(w http.ResponseWriter, r *http.Request) {
 	exists, id, err := exists(r)
 
 	if exists {

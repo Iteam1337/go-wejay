@@ -7,8 +7,15 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// ServerListen …
-func ServerListen() {
+type route struct {
+	auth routeAuth
+	main routeMain
+	room routeRoom
+}
+
+var router = route{}
+
+func serverListen() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/callback", router.auth.callback).Methods("GET")

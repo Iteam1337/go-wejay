@@ -3,6 +3,7 @@ package tmpl
 import (
 	"html/template"
 	"io"
+	"log"
 )
 
 var (
@@ -18,22 +19,27 @@ type tmplNewAuth struct {
 }
 
 type tmplProfile struct {
-	WS template.URL
 }
 
 // Base …
 func Base(w io.Writer, html string) {
-	tmpl.ExecuteTemplate(w, "base", tmplBase{template.HTML(html)})
+	if err := tmpl.ExecuteTemplate(w, "base", tmplBase{template.HTML(html)}); err != nil {
+		log.Println(err)
+	}
 }
 
 // Profile …
-func Profile(w io.Writer, ws string) {
-	tmpl.ExecuteTemplate(w, "profile", tmplProfile{template.URL(ws)})
+func Profile(w io.Writer) {
+	if err := tmpl.ExecuteTemplate(w, "profile", tmplProfile{}); err != nil {
+		log.Println(err)
+	}
 }
 
 // NewAuth …
 func NewAuth(w io.Writer, signIn string) {
-	tmpl.ExecuteTemplate(w, "newAuth", tmplNewAuth{signIn})
+	if err := tmpl.ExecuteTemplate(w, "newAuth", tmplNewAuth{signIn}); err != nil {
+		log.Println(err)
+	}
 }
 
 func init() {

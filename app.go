@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"strings"
 
 	_ "github.com/joho/godotenv/autoload"
 
@@ -16,14 +14,9 @@ var (
 	port      = utils.Getenv("PORT", "8080")
 	addr      = utils.Getenv("ADDR", fmt.Sprintf("%s:%s", host, port))
 	udpHost   = utils.Getenv("UDP_SERVER", "localhost:8090")
-	wsaddr    = fmt.Sprintf("%s/ws", utils.Getenv("WS_ADDR", fmt.Sprintf("ws://%s", addr)))
 	updServer = udp.Connect(udpHost)
 )
 
 func main() {
-	if strings.HasPrefix(wsaddr, "ws://") && !strings.Contains(wsaddr, "//localhost:") {
-		log.Fatalln("websockets will not work unless localhost or wss://")
-	}
-
-	ServerListen()
+	serverListen()
 }
