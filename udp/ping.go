@@ -11,10 +11,17 @@ import (
 func ping(conn net.Conn, ok chan bool) {
 	buff := make([]byte, 3)
 
-	conn.Write([]byte{byte(types.IPing), byte(version.Version)})
-	_, err := conn.Read(buff)
-	if err != nil {
-		log.Printf("got error: %s\n", err.Error())
+	_, writeErr := conn.Write([]byte{byte(types.IPing), byte(version.Version)})
+
+	if writeErr != nil {
+		log.Printf("writeErr\t got error: %s\n", writeErr.Error())
+		ok <- false
+		return
+	}
+
+	_, readErr := conn.Read(buff)
+	if readErr != nil {
+		log.Printf("readErr\t got error: %s\n", readErr.Error())
 		ok <- false
 		return
 	}
