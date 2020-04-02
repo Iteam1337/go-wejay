@@ -20,7 +20,7 @@ var router = route{}
 
 const (
 	routePathBase      routePath = "/"
-	routePathProfile   routePath = "/profile"
+	routePathEmpty     routePath = "/empty"
 	routePathNewAuth   routePath = "/new-auth"
 	routePathLeaveRoom routePath = "/room/leave"
 )
@@ -41,7 +41,7 @@ func serverListen() {
 	r.HandleFunc("/room/leave", router.room.Leave).Methods("GET")
 	r.HandleFunc("/room/{room}", router.room.View).Methods("GET")
 
-	r.HandleFunc("/profile", router.main.Profile).Methods("GET")
+	r.HandleFunc("/empty", router.main.Empty).Methods("GET")
 	r.HandleFunc("/", router.main.Root).Methods("GET")
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))

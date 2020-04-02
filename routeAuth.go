@@ -22,7 +22,7 @@ func (route *routeAuth) NewAuth(w http.ResponseWriter, r *http.Request) {
 	exists, _, err := exists(r)
 
 	if err == nil && exists {
-		redirect(w, r, routePathProfile)
+		redirect(w, r, routePathEmpty)
 		return
 	}
 
@@ -53,7 +53,7 @@ func (route *routeAuth) Callback(w http.ResponseWriter, r *http.Request) {
 	); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	} else {
-		redirect(w, r, routePathProfile)
+		redirect(w, r, routePathEmpty)
 	}
 }
 

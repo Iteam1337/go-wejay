@@ -12,7 +12,7 @@ var (
 
 type tmplBase struct{ HTML template.HTML }
 type tmplNewAuth struct{ SignIn string }
-type tmplProfile struct{}
+type tmplEmpty struct{}
 type tmplInRoom struct{ Name string }
 
 func Base(w io.Writer, html string) {
@@ -21,8 +21,8 @@ func Base(w io.Writer, html string) {
 	}
 }
 
-func Profile(w io.Writer) {
-	if err := tmpl.ExecuteTemplate(w, "profile", tmplProfile{}); err != nil {
+func Empty(w io.Writer) {
+	if err := tmpl.ExecuteTemplate(w, "empty", tmplEmpty{}); err != nil {
 		log.Println(err)
 	}
 }

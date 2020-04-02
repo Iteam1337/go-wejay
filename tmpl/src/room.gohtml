@@ -3,7 +3,20 @@
 <body>
   {{if .Name}}<h1>In room {{.Name}}</h1>{{end}}
 
-	{{template "Info"}}
+	<div>
+		<p>
+Your user is now controlled by WEJAY. A special playlist named wejay will be <br/>
+created on your account, and as long as you have the spotify app running, this <br/>
+will be the playlist that is active.
+		</p>
+		<p>
+If you want to pause, just pause. Shuffle and repeat will actively be unselected.
+		</p>
+		<p>
+When you want to quit, just leave the room. The agent will be active for 8 hours, <br/>
+then you need to sign in again to continue.
+		</p>
+	</div>
 
 	<a href="/room/leave">leave room</a>
 	<a href="/sign-out">sign out</a>

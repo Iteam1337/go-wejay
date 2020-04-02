@@ -1,8 +1,11 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
+	"github.com/Iteam1337/go-protobuf-wejay/message"
+	"github.com/Iteam1337/go-protobuf-wejay/types"
 	"github.com/Iteam1337/go-wejay/tmpl"
 )
 
@@ -21,11 +24,11 @@ func (route *routeMain) Root(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	redirect(w, r, routePathProfile)
+	redirect(w, r, routePathEmpty)
 }
 
-func (route *routeMain) Profile(w http.ResponseWriter, r *http.Request) {
-	exists, _, err := exists(r)
+func (route *routeMain) Empty(w http.ResponseWriter, r *http.Request) {
+	exists, userID, err := exists(r)
 
 	if err != nil {
 		redirect(w, r, routePathBase)
@@ -37,7 +40,20 @@ func (route *routeMain) Profile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var cb message.UserRoomResponse
+	if err := updServer.NewRequest(
+		types.IUserRoom,
+		&message.UserRoom{UserId: userID},
+		&cb,
+	); err != nil {
+		log.Println(err)
+	}
+
+	if cb.Ok && cb.RoomId != "" {
+		redirect(w, r, "/room/"+cb.RoomId)
+	}
+
 	w.Header().Set("Content-Type", "text/html")
 
-	tmpl.Profile(w)
+	tmpl.Empty(w)
 }

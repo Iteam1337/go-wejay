@@ -1,9 +1,11 @@
-{{define "profile"}}
+{{define "empty"}}
 {{template "Header"}}
 <body>
 	<h1>Welcome!</h1>
 
-	{{template "Info"}}
+	<div>
+		<p>To start, please join a room!</p>
+	</div>
 
 	<form action="/room" method="GET">
 		<label for="name">
