@@ -13,18 +13,20 @@ type route struct {
 	main routeMain
 	room routeRoom
 }
+
 type routePath string
 
 var router = route{}
 
 const (
-	routePathBase    routePath = ""
-	routePathProfile routePath = "profile"
-	routePathNewAuth routePath = "new-auth"
+	routePathBase      routePath = "/"
+	routePathProfile   routePath = "/profile"
+	routePathNewAuth   routePath = "/new-auth"
+	routePathLeaveRoom routePath = "/room/leave"
 )
 
-func redirect(w http.ResponseWriter, r *http.Request, path routePath) {
-	http.Redirect(w, r, fmt.Sprintf("//%s/%s", r.Host, path), 307)
+func redirect(w http.ResponseWriter, r *http.Request, path interface{}) {
+	http.Redirect(w, r, fmt.Sprintf("//%s%s", r.Host, path), 307)
 }
 
 func serverListen() {
@@ -37,6 +39,7 @@ func serverListen() {
 	r.HandleFunc("/rooms", router.room.Query).Methods("GET")
 	r.HandleFunc("/room", router.room.Join).Methods("GET")
 	r.HandleFunc("/room/leave", router.room.Leave).Methods("GET")
+	r.HandleFunc("/room/{room}", router.room.View).Methods("GET")
 
 	r.HandleFunc("/profile", router.main.Profile).Methods("GET")
 	r.HandleFunc("/", router.main.Root).Methods("GET")

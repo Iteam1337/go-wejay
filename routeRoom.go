@@ -8,6 +8,8 @@ import (
 
 	"github.com/Iteam1337/go-protobuf-wejay/message"
 	"github.com/Iteam1337/go-protobuf-wejay/types"
+	"github.com/Iteam1337/go-wejay/tmpl"
+	"github.com/gorilla/mux"
 )
 
 type routeRoom struct {
@@ -58,21 +60,23 @@ func (route *routeRoom) joinRoom(roomID string, userID string) (room message.Ref
 	return
 }
 
-func (route *routeRoom) leaveRoom(userId string) (ok bool) {
+func (route *routeRoom) leaveRoom(userID string) (ok bool) {
 	var cb message.UserLeaveRoomResponse
 	if err := updServer.NewRequest(
 		types.IUserLeaveRoom,
-		&message.UserLeaveRoom{UserId: userId},
+		&message.UserLeaveRoom{UserId: userID},
 		&cb,
 	); err != nil {
 		log.Println(err)
+		return
 	}
 
 	if cb.Error != "" {
 		log.Println(cb.Error)
+		return
 	}
 
-	if cb.Ok && cb.UserId == userId {
+	if cb.Ok && cb.UserId == userID {
 		ok = true
 	}
 
@@ -97,10 +101,7 @@ func (route *routeRoom) Join(w http.ResponseWriter, r *http.Request) {
 		log.Println(room)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if _, e := w.Write([]byte(`{"path":"/room/` + roomID + `"}`)); e != nil {
-		http.Error(w, e.Error(), http.StatusInternalServerError)
-	}
+	redirect(w, r, "/room/"+roomID)
 }
 
 func (route *routeRoom) Leave(w http.ResponseWriter, r *http.Request) {
@@ -121,4 +122,38 @@ func (route *routeRoom) Leave(w http.ResponseWriter, r *http.Request) {
 
 func (route *routeRoom) Query(w http.ResponseWriter, r *http.Request) {
 
+}
+
+func (route *routeRoom) View(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)["room"]
+	exists, userID, err := exists(r)
+
+	if err != nil || userID == "" || !exists {
+		redirect(w, r, routePathBase)
+		return
+	}
+
+	var cb message.UserRoomResponse
+	if err := updServer.NewRequest(
+		types.IUserRoom,
+		&message.UserRoom{UserId: userID},
+		&cb,
+	); err != nil {
+		log.Println(err)
+		redirect(w, r, routePathBase)
+		return
+	}
+
+	if cb.Error != "" || !cb.Ok || cb.UserId != userID {
+		log.Println(cb.Error)
+		redirect(w, r, routePathBase)
+		return
+	}
+
+	if vars != cb.RoomId {
+		redirect(w, r, routePathLeaveRoom)
+		return
+	}
+
+	tmpl.InRoom(w, vars)
 }

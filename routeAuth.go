@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/Iteam1337/go-protobuf-wejay/message"
@@ -21,7 +22,7 @@ func (route *routeAuth) NewAuth(w http.ResponseWriter, r *http.Request) {
 	exists, _, err := exists(r)
 
 	if err == nil && exists {
-		redirect(w, r, "profile")
+		redirect(w, r, routePathProfile)
 		return
 	}
 
@@ -52,7 +53,7 @@ func (route *routeAuth) Callback(w http.ResponseWriter, r *http.Request) {
 	); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	} else {
-		redirect(w, r, "profile")
+		redirect(w, r, routePathProfile)
 	}
 }
 
@@ -64,8 +65,7 @@ func (route *routeAuth) SignOut(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err != nil || !exists {
-		redirect(w, r, "")
-
+		redirect(w, r, routePathBase)
 		return
 	}
 
@@ -73,9 +73,8 @@ func (route *routeAuth) SignOut(w http.ResponseWriter, r *http.Request) {
 	err = updServer.NewRequest(types.IDeleteUser, &message.DeleteUser{UserId: id}, &del)
 
 	if err != nil {
-		redirect(w, r, "")
-		return
+		log.Println(err)
 	}
 
-	redirect(w, r, "")
+	redirect(w, r, routePathBase)
 }

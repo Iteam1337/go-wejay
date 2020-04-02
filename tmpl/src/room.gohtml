@@ -1,0 +1,11 @@
+{{define "room"}}
+{{template "Header"}}
+<body>
+  {{if .Name}}<h1>In room {{.Name}}</h1>{{end}}
+
+	{{template "Info"}}
+
+	<a href="/room/leave">leave room</a>
+	<a href="/sign-out">sign out</a>
+</body>
+{{end}}
