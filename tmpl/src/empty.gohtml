@@ -7,6 +7,14 @@
 		<p>To start, please join a room!</p>
 	</div>
 
+	{{if .Rooms}}
+		<ul>
+		{{- range $name, $size := .Rooms}}
+			<li><a href="/room?name={{$name}}">{{$name}} <small>({{$size}})</small></a></li>
+		{{- end}}
+		</ul>
+	{{end}}
+
 	<form action="/room" method="GET">
 		<label for="name">
 			Room name

@@ -4,6 +4,8 @@ import (
 	"html/template"
 	"io"
 	"log"
+
+	"github.com/Iteam1337/go-protobuf-wejay/message"
 )
 
 var (
@@ -12,7 +14,7 @@ var (
 
 type tmplBase struct{ HTML template.HTML }
 type tmplNewAuth struct{ SignIn string }
-type tmplEmpty struct{}
+type tmplEmpty struct{ Rooms map[string]int }
 type tmplInRoom struct{ Name string }
 
 func Base(w io.Writer, html string) {
@@ -21,8 +23,12 @@ func Base(w io.Writer, html string) {
 	}
 }
 
-func Empty(w io.Writer) {
-	if err := tmpl.ExecuteTemplate(w, "empty", tmplEmpty{}); err != nil {
+func Empty(w io.Writer, available []*message.RefRoom) {
+	rooms := make(map[string]int)
+	for _, room := range available {
+		rooms[room.Id] = int(room.Size)
+	}
+	if err := tmpl.ExecuteTemplate(w, "empty", tmplEmpty{rooms}); err != nil {
 		log.Println(err)
 	}
 }

@@ -53,7 +53,7 @@ func (route *routeMain) Empty(w http.ResponseWriter, r *http.Request) {
 		redirect(w, r, "/room/"+cb.RoomId)
 	}
 
+	rooms, _ := router.room.Available("")
 	w.Header().Set("Content-Type", "text/html")
-
-	tmpl.Empty(w)
+	tmpl.Empty(w, rooms)
 }
