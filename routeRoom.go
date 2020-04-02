@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"regexp"
@@ -64,31 +63,23 @@ func (route *routeRoom) joinRoom(roomID string, userID string) (room message.Ref
 func (route *routeRoom) leaveRoom(userID string) (ok bool) {
 	var cb message.UserLeaveRoomResponse
 
-	fmt.Println("1")
 	if err := updServer.NewRequest(
 		types.IUserLeaveRoom,
 		&message.UserLeaveRoom{UserId: userID},
 		&cb,
 	); err != nil {
-		fmt.Println("2")
 		log.Println(err)
 		return
 	}
 
-	fmt.Println("3")
 	if cb.Error != "" {
-		fmt.Println("4")
 		log.Println(cb.Error)
 		return
 	}
 
-	fmt.Println("5", cb.Ok, cb.UserId, userID)
 	if cb.Ok && cb.UserId == userID {
-		fmt.Println("6")
 		ok = true
 	}
-
-	fmt.Println("7")
 
 	return
 }
@@ -117,20 +108,15 @@ func (route *routeRoom) Join(w http.ResponseWriter, r *http.Request) {
 func (route *routeRoom) Leave(w http.ResponseWriter, r *http.Request) {
 	exists, id, err := exists(r)
 
-	log.Println("1")
 	if err != nil || id == "" || !exists {
-		log.Println("2")
 		redirect(w, r, routePathBase)
 		return
 	}
 
-	log.Println("3")
 	if ok := route.leaveRoom(id); !ok {
-		log.Println("4")
 		redirect(w, r, routePathBase)
 		return
 	}
-	log.Println("5")
 
 	redirect(w, r, routePathEmpty)
 }
