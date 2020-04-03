@@ -3,10 +3,12 @@ package main
 import (
 	"log"
 	"net/http"
+	"sort"
 
 	"github.com/Iteam1337/go-protobuf-wejay/message"
 	"github.com/Iteam1337/go-protobuf-wejay/types"
 	"github.com/Iteam1337/go-wejay/tmpl"
+	"github.com/Iteam1337/go-wejay/utils"
 )
 
 type routeMain struct{}
@@ -25,6 +27,18 @@ func (route *routeMain) Root(w http.ResponseWriter, r *http.Request) {
 	}
 
 	redirect(w, r, routePathEmpty)
+}
+
+func sortBySize(available []*message.RefRoom) utils.PairList {
+	pl := make(utils.PairList, len(available))
+	for i, room := range available {
+		pl[i] = utils.Pair{
+			ID:   room.Id,
+			Size: int(room.Size),
+		}
+	}
+	sort.Sort(sort.Reverse(pl))
+	return pl
 }
 
 func (route *routeMain) Empty(w http.ResponseWriter, r *http.Request) {
@@ -55,5 +69,5 @@ func (route *routeMain) Empty(w http.ResponseWriter, r *http.Request) {
 
 	rooms, _ := router.room.Available("")
 	w.Header().Set("Content-Type", "text/html")
-	tmpl.Empty(w, rooms)
+	tmpl.Empty(w, sortBySize(rooms))
 }

@@ -9,8 +9,8 @@
 
 	{{if .Rooms}}
 		<ul>
-		{{- range $name, $size := .Rooms}}
-			<li><a href="/room?name={{$name}}">{{$name}} <small>({{$size}})</small></a></li>
+		{{- range $i, $room := .Rooms}}
+			<li><a href="/room?name={{$room.ID}}">{{$room.ID}} <small>({{$room.Size}})</small></a></li>
 		{{- end}}
 		</ul>
 	{{end}}
