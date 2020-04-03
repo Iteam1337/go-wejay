@@ -181,8 +181,6 @@ func (route *routeRoom) View(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println(cb.Error, cb.Ok, cb.UserId, userID, "cb.RoomId", cb.RoomId, "vars", vars)
-
 	if cb.Error != "" || !cb.Ok || cb.UserId != userID {
 		log.Println(cb.Error)
 		redirect(w, r, routePathBase)
