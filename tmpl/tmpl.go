@@ -15,7 +15,7 @@ var (
 type tmplBase struct{ HTML template.HTML }
 type tmplNewAuth struct{ SignIn string }
 type tmplEmpty struct{ Rooms utils.PairList }
-type tmplInRoom struct{ Name string }
+type tmplInRoom struct{ Name, Title string }
 
 func Base(w io.Writer, html string) {
 	if err := tmpl.ExecuteTemplate(w, "base", tmplBase{template.HTML(html)}); err != nil {
@@ -36,7 +36,7 @@ func NewAuth(w io.Writer, signIn string) {
 }
 
 func InRoom(w io.Writer, room string) {
-	if err := tmpl.ExecuteTemplate(w, "room", tmplInRoom{room}); err != nil {
+	if err := tmpl.ExecuteTemplate(w, "room", tmplInRoom{room, room}); err != nil {
 		log.Println(err)
 	}
 }

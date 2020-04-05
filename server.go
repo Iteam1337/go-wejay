@@ -21,7 +21,6 @@ var router = route{}
 const (
 	routePathBase      routePath = "/"
 	routePathEmpty     routePath = "/empty"
-	routePathNewAuth   routePath = "/new-auth"
 	routePathLeaveRoom routePath = "/room/leave"
 )
 
@@ -34,7 +33,6 @@ func serverListen() {
 
 	r.HandleFunc("/callback", router.auth.Callback).Methods("GET")
 	r.HandleFunc("/sign-out", router.auth.SignOut).Methods("GET")
-	r.HandleFunc("/new-auth", router.auth.NewAuth).Methods("GET")
 
 	r.HandleFunc("/rooms", router.room.Query).Methods("GET")
 	r.HandleFunc("/room", router.room.Join).Methods("GET")

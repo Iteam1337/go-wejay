@@ -9,6 +9,7 @@ import (
 	"github.com/Iteam1337/go-protobuf-wejay/types"
 	"github.com/Iteam1337/go-wejay/tmpl"
 	"github.com/Iteam1337/go-wejay/utils"
+	"github.com/google/uuid"
 )
 
 type routeMain struct{}
@@ -18,15 +19,24 @@ func init() {
 }
 
 func (route *routeMain) Root(w http.ResponseWriter, r *http.Request) {
-	html := `<a href="/new-auth">new auth</a>`
 	exists, _, err := exists(r)
 
-	if err != nil || !exists {
-		tmpl.Base(w, html)
+	if err == nil && exists {
+		redirect(w, r, routePathEmpty)
+		return
+	}
+	var cb message.CallbackURLResponse
+	if err := updServer.NewRequest(
+		types.ICallbackURL,
+		&message.CallbackURL{UserId: uuid.New().String()},
+		&cb,
+	); err != nil {
+		http.Error(w, "Couldn't get callback-url", http.StatusBadRequest)
 		return
 	}
 
-	redirect(w, r, routePathEmpty)
+	w.Header().Set("Content-Type", "text/html")
+	tmpl.NewAuth(w, cb.Url)
 }
 
 func sortBySize(available []*message.RefRoom) utils.PairList {
@@ -50,7 +60,7 @@ func (route *routeMain) Empty(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !exists {
-		redirect(w, r, routePathNewAuth)
+		redirect(w, r, routePathBase)
 		return
 	}
 
