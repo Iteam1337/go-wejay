@@ -1,6 +1,21 @@
 {{define "newAuth"}}
 {{template "Header"}}
 <body>
+	<h1>wejay</h1>
+
+	<article>
+		<p>
+wejay is a system that enhances your Spotify-experience with a controlled <br />
+collaborate playlist. To use, please sign in with your Spotify account then join<br />
+a room.
+		</p>
+
+		<p>
+While in a room, wejay will control your <i>active</i> Spotify client. If you <br />
+want to control you own client, just leave the room.
+		</p>
+	</article>
+
 	{{if .SignIn}}
 		<a href="{{.SignIn}}">sign in</a>
 	{{end}}

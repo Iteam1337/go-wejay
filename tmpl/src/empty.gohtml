@@ -4,16 +4,25 @@
 	<h1>Welcome!</h1>
 
 	<div>
-		<p>To start, please join a room!</p>
-	</div>
-
 	{{if .Rooms}}
+		<p>
+To start, please join a room by selecting one of the available below.
+		</p>
 		<ul>
 		{{- range $i, $room := .Rooms}}
 			<li><a href="/room?name={{$room.ID}}">{{$room.ID}} <small>({{$room.Size}})</small></a></li>
 		{{- end}}
 		</ul>
+	</div>
+	<div>
+		<p>Or create your own using the form below.</p>
+	{{else}}
+		<p>
+No rooms found, reload page or create your own using the form below.
+		</p>
 	{{end}}
+
+	</div>
 
 	<form action="/room" method="GET">
 		<label for="name">

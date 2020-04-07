@@ -1,21 +1,29 @@
 {{define "room"}}
 {{template "Header" .Title}}
 <body>
-  {{if .Name}}<h1>In room {{.Name}}</h1>{{end}}
-	<strong>PLEASE DEACTIVATE CROSSFADE</strong>
-	<div>
+	<article>
+		<h1>In room {{.Name}}</h1>
 		<p>
-Your user is now controlled by WEJAY. A special playlist named wejay will be <br/>
-created on your account, and as long as you have the spotify app running, this <br/>
-will be the playlist that is active.
+			<strong>PLEASE DEACTIVATE CROSSFADE</strong><br/>
+			<small>There is no way to deactivate it from Spotify's API</small>
 		</p>
 		<p>
-If you want to pause, just pause. Shuffle and repeat will actively be unselected.
+Your client is now controlled by wejay. A special playlist named <strong>[wejay] {{.Name}}</strong><br/>
+can be found on your account. And as long as you have the Spotify app running, <br/>
+this  will be the playlist that is active.
 		</p>
 		<p>
-When you want to quit, just leave the room.
+When you want to contribute to what is playing, just add songs to the playlist!
 		</p>
-	</div>
+		<p>
+If you want to pause, just pause. Shuffle and repeat will actively be unselected. <br />
+When you want to quit, just leave the room (from this page) or sign out.
+		</p>
+		<p>
+This page does not need to be active for this to work. When you want control of <br/>
+your client, just come back and leave the room!
+		</p>
+	</article>
 
 	<a href="/room/leave">leave room</a>
 	<a href="/sign-out">sign out</a>
