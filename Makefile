@@ -14,12 +14,12 @@ bin:
 	@echo '"bin" successful'
 
 clean_release:
-	@rm -rf release/
+	@rm -rf release/wejay
 
 release: clean_release
-	@mkdir -p release/tmpl/src release/static
-	@go build -ldflags="-s -w" -o release/wejay
-	@$(INSTALL) static/* release/static/
-	@$(INSTALL) tmpl/src/* release/tmpl/src/
-	@$(INSTALL) .env-template release/.env-template
+	@mkdir -p release/wejay/tmpl/src release/wejay/static
+	@go build -ldflags="-s -w" -o release/wejay/bin
+	@$(INSTALL) static/* release/wejay/static/
+	@$(INSTALL) tmpl/src/* release/wejay/tmpl/src/
+	@$(INSTALL) .env-template release/wejay/.env-template
 	@echo '"release" successful'
