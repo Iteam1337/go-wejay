@@ -28,6 +28,7 @@ func (route routeRoom) parsedRoomName(input []string) (out string) {
 	}
 
 	pre := strings.TrimSpace(input[0])
+	pre = strings.ToLower(pre)
 	pre = strings.ReplaceAll(pre, " ", "-")
 
 	m := route.re.FindAllString(pre, -1)
