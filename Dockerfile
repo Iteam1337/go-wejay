@@ -20,7 +20,6 @@ ENV \
     PORT=8080 \
     HOST=0.0.0.0
 
-
 EXPOSE 8080/tcp
 
 RUN adduser --disabled-password --gecos '' wejay && \
