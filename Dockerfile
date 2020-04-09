@@ -15,12 +15,11 @@ COPY --from=builder /build/release/wejay /app
 ENV \
     # UDP_SERVER=localhost:8090 \
     UDP_SERVER= \
-    # PORT=8080 \
-    PORT= \
-    # HOST=localhost \
-    HOST= \
     # ADDR= \
-    ADDR=
+    ADDR= \
+    PORT=8080 \
+    HOST=0.0.0.0
+
 
 EXPOSE 8080/tcp
 
